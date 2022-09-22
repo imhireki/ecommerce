@@ -4,7 +4,7 @@ from model_bakery import baker
 import pytest
 
 
-pytestmark = [pytest.mark.django_db, pytest.mark.e2e]
+pytestmark = [pytest.mark.django_db, pytest.mark.e2e, pytest.mark.skip]
 
 
 class TestProductEndpoints:
