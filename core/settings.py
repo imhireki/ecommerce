@@ -36,6 +36,10 @@ PACKAGE_APPS = [
     'rest_framework',
 ]
 
+LOCAL_APPS = [
+    'product',
+] 
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-] + PACKAGE_APPS
+] + PACKAGE_APPS  + ['apps.' + app for app in LOCAL_APPS]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
