@@ -4,7 +4,7 @@ from model_bakery import baker
 import pytest
 
 
-pytestmark = [pytest.mark.django_db, pytest.mark.e2e, pytest.mark.skip]
+pytestmark = [pytest.mark.django_db, pytest.mark.e2e]
 
 
 class TestProductEndpoints:
@@ -18,11 +18,13 @@ class TestProductEndpoints:
         assert response.status_code == 200
         assert len(json.loads(response.content)) == 3
 
-    def test_retrieve_product(self, api_client):
+    def test_retrieve_product(self, api_client, mocker):
+        mocker.patch('apps.product.utils.resize_image',
+                     lambda original_image, size: original_image)
         product = baker.make('product.Product')
         variations = baker.make('product.ProductVariation', 2, product=product)
         images = baker.make('product.ProductImage', 3, product=product)
-
+        
         expected_variations = [
             {
             "name": variation.name, "price": variation.price,
