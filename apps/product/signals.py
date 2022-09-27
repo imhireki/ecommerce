@@ -11,7 +11,8 @@ PRODUCT_THUMBNAIL_SIZE = (640, 360)
 def pre_save_product(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = slugify(instance.name)
-
-    instance.thumbnail = utils.resize_image(instance.thumbnail,
-                                            PRODUCT_THUMBNAIL_SIZE)
+    
+    if not instance.thumbnail:
+        instance.thumbnail = utils.resize_image(instance.thumbnail,
+                                                PRODUCT_THUMBNAIL_SIZE)
 
