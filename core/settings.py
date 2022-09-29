@@ -28,7 +28,9 @@ SECRET_KEY = os.getenv('ECOMMERCE_SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
+
+ABSOLUTE_URL = f'http://{ALLOWED_HOSTS[0]}:8000'
 
 # Application definition
 
