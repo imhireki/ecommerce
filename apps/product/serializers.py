@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Product, ProductImage, ProductVariation
 
 
-class ListedProductSerializer(serializers.ModelSerializer):
+class ProductListSerializer(serializers.ModelSerializer):
     slug = serializers.SlugField(source='get_slug_absolute_url')
     thumbnail_url = serializers.CharField(source='get_thumbnail_absolute_url')
 

@@ -12,7 +12,7 @@ def patch_resize_image(mocker):
     mocker.patch('apps.product.utils.resize_image', lambda image, size: image)
 
 
-class TestListedProductSerializer:
+class TestProductListSerializer:
     def test_serialize(self, mocker):
         mocker.patch('apps.product.models.Product.get_thumbnail_absolute_url',
                      settings.ABSOLUTE_URL + '/media/thumbnail')
@@ -28,7 +28,7 @@ class TestListedProductSerializer:
             'promotional_marketing_price': str(product.promotional_marketing_price)
         }
 
-        serializer = serializers.ListedProductSerializer(product)
+        serializer = serializers.ProductListSerializer(product)
 
         assert serializer.data == expected_data
 
