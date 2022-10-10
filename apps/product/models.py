@@ -23,7 +23,7 @@ class Product(models.Model):
         return str(self.name)
 
     def get_slug_absolute_url(self) -> str:
-        return settings.ABSOLUTE_URL + '/' + self.slug
+        return settings.ABSOLUTE_URL + '/products/' + self.slug
 
     def get_thumbnail_absolute_url(self) -> str:
         return settings.ABSOLUTE_URL + self.thumbnail.url
