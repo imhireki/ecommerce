@@ -22,7 +22,7 @@ class TestProductListSerializer:
         expected_data = {
             'id': product.id,
             'name': product.name,
-            'slug': settings.ABSOLUTE_URL + '/' + product.slug,
+            'slug': settings.ABSOLUTE_URL + '/products/' + product.slug,
             'thumbnail_url': settings.ABSOLUTE_URL + '/media/thumbnail',
             'marketing_price': str(product.marketing_price),
             'promotional_marketing_price': str(product.promotional_marketing_price)
