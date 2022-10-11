@@ -7,25 +7,19 @@ from apps.product import serializers
 
 pytestmark = [pytest.mark.unit, pytest.mark.django_db]
 
-@pytest.fixture(autouse=True)
-def patch_resize_image(mocker):
-    mocker.patch('apps.product.utils.resize_image', lambda image, size: image)
-
 
 class TestProductListSerializer:
-    def test_serialize(self, mocker):
-        mocker.patch('apps.product.models.Product.get_thumbnail_absolute_url',
-                     settings.ABSOLUTE_URL + '/media/thumbnail')
-
+    def test_serialize(self, mocker, patch_image):
         product = baker.make('product.Product')
 
         expected_data = {
             'id': product.id,
             'name': product.name,
-            'slug': settings.ABSOLUTE_URL + '/products/' + product.slug,
+            'slug': settings.ABSOLUTE_URL + '/api/v1/products/' + product.slug,
             'thumbnail_url': settings.ABSOLUTE_URL + '/media/thumbnail',
             'marketing_price': str(product.marketing_price),
-            'promotional_marketing_price': str(product.promotional_marketing_price)
+            'promotional_marketing_price': str(
+                product.promotional_marketing_price)
         }
 
         serializer = serializers.ProductListSerializer(product)
@@ -34,7 +28,7 @@ class TestProductListSerializer:
 
 
 class TestProductImageSerializer:
-    def test_serialize(self, mocker):
+    def test_serialize(self, mocker, patch_image):
         image = baker.make('product.ProductImage')
 
         mocker.patch.object(image.image, 'name', 'image')
@@ -49,7 +43,7 @@ class TestProductImageSerializer:
 
 
 class TestProductVariationSerializer:
-    def test_serialize(self):
+    def test_serialize(self, patch_image):
         variation = baker.make('product.ProductVariation')
 
         expected_data = {
@@ -66,10 +60,7 @@ class TestProductVariationSerializer:
 
 
 class TestProductDetailSerializer:
-    def test_serialize(self, mocker):
-        mocker.patch('apps.product.models.ProductImage.get_image_absolute_url',
-                     settings.ABSOLUTE_URL + '/media/image')
-
+    def test_serialize(self, mocker, patch_image):
         product = baker.make('product.Product')
         variation = baker.make('product.ProductVariation', product=product)
         image = baker.make('product.ProductImage', product=product)
