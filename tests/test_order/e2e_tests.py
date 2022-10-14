@@ -26,4 +26,25 @@ class TestOrderEndpoints:
         assert get_order_list_data(order, order_items) \
                == json.loads(response.content)
 
+    def test_checkout(self, mocker, api_client,
+                      patch_image, get_checkout_data):
+        product_variations = baker.prepare(
+            'product.ProductVariation', 2,
+            product=baker.make('product.Product'))
+
+        mocker.patch('apps.product.views.CheckoutView.get_queryset',
+                     return_value=MockSet(*product_variations))
+
+        user_cart_data = [
+            {"variation": product_variations[0].id, "quantity": 1},
+            {"variation": product_variations[1].id, "quantity": 2}
+        ]
+
+        response = api_client().post(
+            self.endpoint,
+            json.dumps(user_cart_data),
+            format='json')
+
+        assert response.status_code == 201
+        assert json.loads(response.content) == get_checkout_data(product_variations)
 
