@@ -40,6 +40,7 @@ PACKAGE_APPS = [
 
 LOCAL_APPS = [
     'product',
+    'order',
 ] 
 
 INSTALLED_APPS = [
