@@ -35,3 +35,13 @@ class TestOrderCheckoutSerializer:
         assert serializer.errors == {}
         assert serializer.data == get_checkout_data(order)
 
+
+class TestOrderListSerializer:
+    def test_serialize(self, get_order_list_data):
+        order = baker.make('order.Order')
+        order_items = baker.make('order.OrderItem', 2, order=order)
+
+        serializer = serializers.OrderListSerializer(order)
+
+        assert serializer.data == get_order_list_data(order, order_items)
+
