@@ -9,6 +9,15 @@ class OrderItemSerializer(serializers.ModelSerializer):
         exclude = ['order']
 
 
+class OrderListSerializer(serializers.ModelSerializer):
+    order_items = OrderItemSerializer(many=True)
+    status = serializers.CharField(source='get_status_display', required=False)
+
+    class Meta:
+        model = models.Order
+        exclude = ['user']
+
+
 class OrderCheckoutSerializer(serializers.ModelSerializer):
     order_items = OrderItemSerializer(many=True, write_only=True)
     status = serializers.CharField(source='get_status_display', required=False)
