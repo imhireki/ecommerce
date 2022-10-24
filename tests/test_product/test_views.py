@@ -1,7 +1,8 @@
+import json
+
 from django.urls import reverse
 from model_bakery import baker
 import pytest
-import json
 
 from apps.product import views
 
