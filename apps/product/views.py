@@ -1,32 +1,29 @@
-from rest_framework.response import Response
 from rest_framework import generics
+from rest_framework import mixins
 
-from .serializers import ProductListSerializer, ProductDetailSerializer
-from .models import Product
+from . import serializers
+from . import models
 
 
 class ProductListView(generics.ListAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductListSerializer
+    queryset = models.Product.objects.all()
+    serializer_class = serializers.ProductListSerializer
 
 
 class ProductDetailView(generics.RetrieveAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductDetailSerializer
+    queryset = models.Product.objects.all()
+    serializer_class = serializers.ProductDetailSerializer
     lookup_field = 'slug'
     lookup_url_kwarg = 'slug'
 
 
-class ProductSearchView(generics.GenericAPIView):
-    serializer_class = ProductListSerializer
+class ProductSearchView(generics.GenericAPIView, mixins.ListModelMixin):
+    serializer_class = serializers.ProductListSerializer
 
     def get_queryset(self):
-        return Product.objects.filter(name__icontains=self.query)
+        return models.Product.objects.filter(
+            name__icontains=self.request.data.get('query'))
 
-    def post(self, request):
-        self.query = request.data.get('query')
+    def post(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-    
