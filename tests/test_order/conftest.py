@@ -4,25 +4,38 @@ import pytest
 
 @pytest.fixture
 def get_order_list_data():
-    return lambda order, order_items: {
-        "id": str(order.id),
-        "paid_amount": str(order.paid_amount),
-        "status": order.get_status_display(),
-        "created_at": DateTimeField().to_representation(order.created_at),
-        "order_items": [{
-            "id": order_item.id,
-            "product": order_item.product,
-            "product_variation": order_item.product_variation,
-            "price": str(order_item.price),
-            "quantity": order_item.quantity,
-        } for order_item in order_items],
-    }
+    def _(order, order_items):
+        if not isinstance(order, dict):
+            order = order.__dict__
+            order_items = [
+                order_item.__dict__
+                for order_item in order_items
+            ]
+        return {
+            "id": str(order['id']),
+            "paid_amount": str(order['paid_amount']),
+            "status": "Pending",
+            "created_at": DateTimeField().\
+                          to_representation(order['created_at']),
+            "order_items": [{
+                "id": order_item['id'],
+                "product": order_item['product'],
+                "product_variation": order_item['product_variation'],
+                "price": str(order_item['price']),
+                "quantity": order_item['quantity'],
+            } for order_item in order_items],
+        }
+    return _
 
 @pytest.fixture
 def get_checkout_data():
-    return lambda order: {
-        "id": str(order.id),
-        "paid_amount": str(order.paid_amount),
-        "status": order.get_status_display(),
-    }
+    def _(order):
+        if not isinstance(order, dict):
+            order = order.__dict__
+        return {
+            "id": str(order['id']),
+            "paid_amount": str(order['paid_amount']),
+            "status": "Pending",
+        }
+    return _
 
