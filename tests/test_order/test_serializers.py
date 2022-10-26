@@ -8,7 +8,7 @@ pytestmark = [pytest.mark.django_db, pytest.mark.unit]
 
 
 class TestOrderCheckoutSerializer:
-    def test_deserialize(self, patch_image, get_checkout_data):
+    def test_deserialize(self, get_checkout_data, patch_image):
         product_variations = baker.make(
             'product.ProductVariation', 2,
             product=baker.make('product.Product'),
@@ -24,7 +24,10 @@ class TestOrderCheckoutSerializer:
         valid_data = {
             'user': baker.make('User').id,
             'order_items': order_items_data,
-            'paid_amount': sum([data['price'] for data in order_items_data]),
+            'paid_amount': sum([
+                product_variation['price']
+                for product_variation in order_items_data
+            ])
         }
 
         serializer = serializers.OrderCheckoutSerializer(data=valid_data)
