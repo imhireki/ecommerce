@@ -1,6 +1,5 @@
 import json
 
-from django_mock_queries.mocks import MockSet
 from model_bakery import baker
 import pytest
 
@@ -15,43 +14,46 @@ class TestOrderEndpoints:
         baker.make('order.Order', 10)
         baker.make('order.OrderItem', 10)
 
-        orders = baker.make('order.Order', 2, user=baker.make('User'))
+        user = baker.make('User')
+        orders = baker.make('order.Order', 2, user=user)
         orders_items = [
             baker.make('order.OrderItem', 2, order=order)
             for order in orders
         ]
 
-        response = api_client().get(self.endpoint)
+        client = api_client()
+        client.force_authenticate(user=user)
+        response = client.get(self.endpoint)
 
         assert response.status_code == 200
-        assert len(json.loads(response.content)) == 2
-        assert get_order_list_data(orders[0], orders_items[0]) \
-            and get_order_list_data(orders[1], orders_items[1]) \
-            == json.loads(response.content)
+        assert json.loads(response.content) == [
+            get_order_list_data(orders[1], orders_items[1]),
+            get_order_list_data(orders[0], orders_items[0]),
+            ]
 
-    def test_checkout(self, mocker, api_client,
-                      patch_image, get_checkout_data):
+    def test_checkout(self, api_client, get_checkout_data, patch_image):
         product_variations = baker.make(
             'product.ProductVariation', 2,
             product=baker.make('product.Product'),
             promotional_price=10)
 
-        mocker.patch('apps.product.views.CheckoutView.get_queryset',
-                     return_value=MockSet(*product_variations))
+        user_cart_data = {
+            "order_items": [{
+                "product": variation.product.id,
+                "product_variation": variation.id,
+                "price": variation.promotional_price,
+                "quantity": variation.id
+            } for variation in product_variations]
+        }
 
-        user_cart_data = [{
-            "product": variation.product.id,
-            "product_variation": variation.id,
-            "price": variation.promotional_price,
-            "quantity": variation.id
-        } for variation in product_variations]
-
-        response = api_client().post(
-            self.endpoint,
-            json.dumps(user_cart_data),
+        client = api_client()
+        client.force_authenticate(user=baker.make('User'))
+        response = client.post(
+            self.endpoint + 'checkout/',
+            user_cart_data,
             format='json')
 
         assert response.status_code == 201
         assert json.loads(response.content) \
-               == get_checkout_data(product_variations)
+            == get_checkout_data(json.loads(response.content))
 
