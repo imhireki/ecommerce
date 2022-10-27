@@ -31,20 +31,20 @@ class TestProductEndpoints:
         response = api_client().get(f'{self.endpoint}{product.slug}/')
 
         assert response.status_code == 200
-        assert json.loads(response.content) == get_product_detail_data(
-            product, images, variations)
+        assert json.loads(response.content) \
+            == get_product_detail_data(product, images, variations)
 
     def test_search_products(self, api_client, patch_image,
                              get_product_list_data):
-        product = baker.make('product.Product', name='name')
+        products = baker.make('product.Product', 3)
 
         response = api_client().post(
             self.endpoint + 'search/',
-            {"query": product.name},
+            {"query": products[0].name},
             format='json')
 
         assert response.status_code == 200
         assert len(json.loads(response.content)) == 1
-        assert get_product_list_data(product) \
-               in json.loads(response.content)
+        assert get_product_list_data(products[0]) \
+            in json.loads(response.content)
 
