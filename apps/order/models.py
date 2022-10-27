@@ -25,6 +25,9 @@ class Order(models.Model):
     
     class Meta:
         ordering = ['-created_at']
+
+    def __str__(self) -> str:
+        return str(self.id)
             
 
 class OrderItem(models.Model):
@@ -36,4 +39,7 @@ class OrderItem(models.Model):
     product_variation = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
+    
+    def __str__(self) -> str:
+        return f"Order {self.order.id}'s item"
 

@@ -43,6 +43,9 @@ class ProductVariation(models.Model):
     class Meta:
         ordering = ['-product']
 
+    def __str__(self):
+        return f"Product {self.product.name}'s variation"
+
 
 class ProductImage(models.Model):
     image = models.ImageField(upload_to='product/images/%Y/%m/')
@@ -53,6 +56,9 @@ class ProductImage(models.Model):
 
     class Meta:
         ordering = ['-product']
+
+    def __str__(self):
+        return f"Product {self.product.name}'s image"
 
     def get_image_absolute_url(self) -> str:
         return settings.ABSOLUTE_URL + self.image.url 
