@@ -84,11 +84,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': os.getenv('ECOMMERCE_HOST'),
+        'USER': os.getenv('ECOMMERCE_USER'),
+        'PORT': os.getenv('ECOMMERCE_PORT'),
+        'NAME': os.getenv('ECOMMERCE_NAME'),
+        'PASSWORD': os.getenv('ECOMMERCE_PASS')
     }
 }
 
