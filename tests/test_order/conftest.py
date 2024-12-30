@@ -1,4 +1,6 @@
 from rest_framework.serializers import DateTimeField
+from django.db.models.signals import post_save
+from apps.order.signals import post_save_order
 import pytest
 
 
@@ -38,4 +40,13 @@ def get_checkout_data():
             "status": "Pending",
         }
     return _
+
+@pytest.mark.django_db
+@pytest.fixture
+def disable_post_save_signal():
+    # Disconnect the signal temporarily for the test
+    post_save.disconnect(post_save_order, sender='order.Order')
+    yield
+    # Reconnect the signal after the test
+    post_save.connect(post_save_order, sender='order.Order')
 
