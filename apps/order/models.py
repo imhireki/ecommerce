@@ -1,10 +1,7 @@
 import uuid
 
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.db import models
-
-
-User = get_user_model()
 
 
 class Order(models.Model):
@@ -16,7 +13,7 @@ class Order(models.Model):
         ('F', 'Finalized'),
     ] 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
     paid_amount = models.DecimalField(max_digits=6, decimal_places=2)
     status = models.CharField(max_length=1,
