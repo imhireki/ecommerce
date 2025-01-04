@@ -8,14 +8,14 @@ from apps.order.models import Order
 pytestmark = [pytest.mark.django_db, pytest.mark.unit]
 
 
-@pytest.mark.parametrize('created, expect_email', 
+@pytest.mark.parametrize('creating, send_email',
                          [(True, True), (False, False)])
-def test_post_save_order(mocker, created, expect_email):
+def test_post_save_order(mocker, creating, send_email):
     send_email_mock = mocker.patch(
-        'apps.order.signals.utils.send_order_confirmation_email')
+        'apps.order.signals.send_order_confirmation_email_async.delay')
     order = baker.prepare('order.Order')
 
-    post_save.send(Order, instance=order, created=created)
+    post_save.send(Order, instance=order, created=creating)
 
-    assert send_email_mock.called == expect_email
+    assert send_email_mock.called == send_email
     
