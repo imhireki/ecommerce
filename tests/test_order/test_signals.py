@@ -10,7 +10,8 @@ pytestmark = [pytest.mark.django_db, pytest.mark.unit]
 
 @pytest.mark.parametrize('creating, send_email',
                          [(True, True), (False, False)])
-def test_post_save_order(mocker, creating, send_email):
+def test_post_save_order(mocker, creating, send_email,
+                         enable_post_save_signal):
     send_email_mock = mocker.patch(
         'apps.order.signals.send_order_confirmation_email_async.delay')
     order = baker.prepare('order.Order')

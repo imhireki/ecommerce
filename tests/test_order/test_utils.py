@@ -10,7 +10,7 @@ from apps.order import utils
 pytestmark = [pytest.mark.django_db, pytest.mark.unit]
 
 @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
-def test_send_order_confirmation_email(disable_post_save_signal):
+def test_send_order_confirmation_email():
     order = baker.make('order.Order', user__email='test@email.com')
     items = baker.make('order.OrderItem', 2, order=order)
 

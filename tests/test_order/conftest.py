@@ -41,12 +41,17 @@ def get_checkout_data():
         }
     return _
 
-@pytest.mark.django_db
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def disable_post_save_signal():
     # Disconnect the signal temporarily for the test
     post_save.disconnect(post_save_order, sender='order.Order')
     yield
     # Reconnect the signal after the test
     post_save.connect(post_save_order, sender='order.Order')
+
+@pytest.fixture
+def enable_post_save_signal():
+    post_save.connect(post_save_order, sender='order.Order')
+    yield
+    post_save.disconnect(post_save_order, sender='order.Order')
 
