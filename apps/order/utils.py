@@ -8,7 +8,7 @@ from django.utils import timezone
 from apps.order.models import Order, OrderItem
 
 
-def send_order_confirmation_email(instance: Order):
+def send_order_confirmation_email(instance: Order) -> None:
     # Preload related User and OrderItem data
     order = (
         Order.objects.select_related('user')
@@ -27,7 +27,7 @@ def send_order_confirmation_email(instance: Order):
 
     send_mail(subject, '', None, [order.user.email], html_message=email)
 
-def report_yesterday_orders_to_staff_email():
+def report_yesterday_orders_to_staff_email() -> None:
     yesterday = timezone.now() - timedelta(days=1)
 
     orders = (

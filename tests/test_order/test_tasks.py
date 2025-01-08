@@ -8,7 +8,7 @@ pytestmark = [pytest.mark.unit, pytest.mark.celery]
 
 @pytest.mark.django_db(transaction=True)
 def test_send_order_confirmation_email_async(celery_session_worker, mocker):
-    send_email = mocker.patch('apps.order.tasks.send_order_confirmation_email') 
+    send_email = mocker.patch('apps.order.utils.send_order_confirmation_email')
 
     order = baker.make('order.Order')
 
