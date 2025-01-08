@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 
@@ -162,4 +163,10 @@ CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ('application/json',)
+CELERY_BEAT_SCHEDULE = {
+    'early-morning-report': {
+        'task': 'apps.order.tasks.report_yesterday_orders_to_staff_email_async',
+        'schedule': crontab(hour='5'),
+    },
+}
 
