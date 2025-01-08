@@ -1,0 +1,24 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}[E-commerce] order confirmed{% endblock %}
+
+{% block header %}
+<h1>Order: {{ order|truncatechars:8 }} confirmed</h1>
+{% endblock %}
+
+{% block content %}
+<div>
+  <p>username: {{ username|truncatechars:8 }}</p>
+  <p>Total: {{ total }}</p>
+  <p>Items:</p>
+  {% for item in items %}
+  <div>
+    <tr>
+      <td>product: {{ item.product_variation|truncatechars:8 }}</td>
+      <td>quantity: {{ item.quantity }}</td>
+      <td>price: {{ item.price }}</td>
+    </tr>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

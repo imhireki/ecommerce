@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Email{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .email-header {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .email-body {
+            padding: 20px;
+            color: #333333;
+        }
+        .email-footer {
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #888888;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header Section -->
+        <div class="email-header">
+            {% block header %}
+            <h1>Welcome to [E-commerce]</h1>
+            {% endblock %}
+        </div>
+        <!-- Body Section -->
+        <div class="email-body">
+            {% block content %}
+            <!-- Default content can go here -->
+            {% endblock %}
+        </div>
+        <!-- Footer Section -->
+        <div class="email-footer">
+            {% block footer %}
+            <p>&copy; 2025 E-commerce. All rights reserved.</p>
+            <p><a href="https://example.com/unsubscribe">Unsubscribe</a></p>
+            {% endblock %}
+        </div>
+    </div>
+</body>
+</html>
+

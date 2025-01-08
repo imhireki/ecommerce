@@ -1,0 +1,13 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}[E-commerce] daily report{% endblock %}
+
+{% block header %}[E-commerce] {{ date }} report{% endblock %}
+
+{% block content %}
+<div>
+  <p>Total: {{ total }}</p>
+  <p>Number of items: {{ num_items }}</p>
+  <p>Number of different users: {{ num_diff_users }}</p>
+</div>
+{% endblock %}
