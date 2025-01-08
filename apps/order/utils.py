@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.template.loader import render_to_string
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -14,20 +15,17 @@ def send_order_confirmation_email(instance: Order):
         .prefetch_related('order_items').get(id=instance.id)
     )
 
-    items = [
-        f'{item.quantity}x product {item.product_variation} ${item.price}\n' 
-        for item in OrderItem.objects.filter(order=order.id)
-    ]
+    context = {
+        'username': order.user.username,
+        'total': order.paid_amount,
+        'order': order.id,
+        'items': list(OrderItem.objects.filter(order=order.id))
+    }
 
-    subject = f'Order {order.id} at Django created'
-    message=[
-        f'Order {order.id} by {order.user.username}\n',
-        f'Total: {order.paid_amount}\n',
-        'Items:\n',
-    ]
-    message.extend(items)
+    email = render_to_string('emails/order_confirmation_email.html', context)
+    subject = '[E-commerce] Confirmed order'
 
-    send_mail(subject, ''.join(message), None, [order.user.email])
+    send_mail(subject, '', None, [order.user.email], html_message=email)
 
 def report_yesterday_orders_to_staff_email():
     yesterday = timezone.now() - timedelta(days=1)
@@ -43,16 +41,20 @@ def report_yesterday_orders_to_staff_email():
         get_user_model().objects.filter(is_staff=True)
     ]
 
+    date = yesterday.date().strftime("%d/%m/%Y")
     total = sum(order.paid_amount for order in orders)
     num_diff_users = len({order.user for order in orders})
     num_items = sum(item.quantity for item in items) 
 
-    subject = 'Django report: ' + yesterday.date().strftime("%d/%m/%Y")
-    message = [
-        f'total: {total}\n',
-        f'number of items: {num_items}\n',
-        f'number of different users: {num_diff_users}',
-    ]
+    context = {
+        'date': date,
+        'total': total,
+        'num_items': num_items,
+        'num_diff_users': num_diff_users,
+    }
+    subject = '[E-commerce] ' + date + ' report'
 
-    send_mail(subject, ''.join(message), None, recipient_list=staff_members)
+    email = render_to_string('emails/daily_report.html', context)
+
+    send_mail(subject, '', None, staff_members, html_message=email)
 
