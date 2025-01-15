@@ -40,6 +40,7 @@ ABSOLUTE_URL = f'http://{ALLOWED_HOSTS[0]}:8000'
 # Application definition
 
 PACKAGE_APPS = [
+    'daphne',
     'rest_framework',
 ]
 
@@ -48,14 +49,14 @@ LOCAL_APPS = [
     'order',
 ] 
 
-INSTALLED_APPS = [
+INSTALLED_APPS = PACKAGE_APPS + [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-] + PACKAGE_APPS  + ['apps.' + app for app in LOCAL_APPS]
+] + ['apps.' + app for app in LOCAL_APPS]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -86,6 +87,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+
+ASGI_APPLICATION = 'core.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -170,3 +173,12 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+# Channels Backend
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
