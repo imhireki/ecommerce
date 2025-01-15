@@ -165,7 +165,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ('application/json',)
 CELERY_BEAT_SCHEDULE = {
     'early-morning-report': {
-        'task': 'apps.order.tasks.report_yesterday_orders_to_staff_email_async',
+        'task': 'apps.order.tasks.report_yesterday_orders_to_staff_email_task',
         'schedule': crontab(hour='5'),
     },
 }
