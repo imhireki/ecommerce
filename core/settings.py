@@ -45,6 +45,7 @@ PACKAGE_APPS = [
 ]
 
 LOCAL_APPS = [
+    'notification',
     'product',
     'order',
 ] 
