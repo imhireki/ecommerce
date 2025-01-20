@@ -1,6 +1,7 @@
 from model_bakery import baker
 import pytest
 
+from apps.notification.models import Broadcast
 from apps.notification import utils
 
 
@@ -18,4 +19,14 @@ def test_broadcast(mocker):
 
     assert async_to_sync.call_args.args == (broadcast_async,)
     assert async_to_sync().call_args.args == (b.id, b.message, b.expires_at)
+
+@pytest.mark.parametrize('broadcast', [True, False])
+def test_delete_broadcast_object(broadcast):
+
+    if broadcast:
+        baker.make('notification.Broadcast')
+
+    utils.delete_broadcast_object(9)
+
+    assert not Broadcast.objects.filter(id=9).exists()
 
