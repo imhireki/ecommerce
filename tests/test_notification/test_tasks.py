@@ -14,3 +14,20 @@ def test_broadcast_task(celery_session_worker, mocker):
 
     assert broadcast.call_args.args == (b.id, b.message, b.expires_at)
 
+def test_broadcast_cleanup_task(celery_session_worker, mocker):
+    b = baker.prepare('notification.Broadcast', id=10)
+
+    remove_ptask = mocker.patch(
+        'apps.notification.utils.remove_broadcast_periodic_task'
+    )
+
+    delete_broadcast = mocker.patch(
+        'apps.notification.utils.delete_broadcast_object'
+    )
+
+    tasks.broadcast_cleanup_task.delay(b.id).get(timeout=5)
+
+    assert remove_ptask.call_args_list[0].args == ('broadcast 10',)
+    assert remove_ptask.call_args_list[1].args == ('broadcast_cleanup 10',)
+    assert delete_broadcast.call_args.args == (b.id,)
+     
