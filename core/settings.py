@@ -42,6 +42,7 @@ ABSOLUTE_URL = f'http://{ALLOWED_HOSTS[0]}:8000'
 PACKAGE_APPS = [
     'daphne',
     'rest_framework',
+    'django_celery_beat',
 ]
 
 LOCAL_APPS = [
