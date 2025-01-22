@@ -53,3 +53,19 @@ def test_remove_broadcast_periodic_task(mocker, ptask, same_sched_ptask):
                 .filter(id=schedule.id).exists())
     assert not PeriodicTask.objects.filter(name='b 5').exists()
 
+def test_schedule_broadcast(mocker):
+    b = baker.make('notification.Broadcast')
+
+    utils.schedule_broadcast(b.id, b.message, b.scheduled_to, b.expires_at)
+
+    schedule = CrontabSchedule.objects.get(
+        minute=b.scheduled_to.minute, hour=b.scheduled_to.hour,
+        day_of_month=b.scheduled_to.day,
+        month_of_year=b.scheduled_to.month
+    )
+
+    ptask = PeriodicTask.objects.get(name=f'broadcast {b.id}')
+
+    assert schedule
+    assert ptask
+
