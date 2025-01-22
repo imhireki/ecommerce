@@ -69,3 +69,19 @@ def test_schedule_broadcast(mocker):
     assert schedule
     assert ptask
 
+def test_schedule_broadcast_cleanup(mocker):
+    b = baker.make('notification.Broadcast')
+
+    utils.schedule_broadcast_cleanup(b.id, b.expires_at)
+
+    schedule = CrontabSchedule.objects.get(
+        minute=b.expires_at.minute, hour=b.expires_at.hour,
+        day_of_month=b.expires_at.day,
+        month_of_year=b.expires_at.month
+    )
+
+    ptask = PeriodicTask.objects.get(name=f'broadcast_cleanup {b.id}')
+
+    assert schedule
+    assert ptask
+
