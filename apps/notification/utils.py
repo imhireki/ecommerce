@@ -51,3 +51,20 @@ def schedule_broadcast(bid, message, scheduled_to, expires_at) -> None:
     )
     periodic_task.save()
 
+def schedule_broadcast_cleanup(bid, expires_at) -> None:
+    schedule, _ = CrontabSchedule.objects.get_or_create(
+        minute=expires_at.minute,
+        hour=expires_at.hour,
+        day_of_month=expires_at.day,
+        month_of_year=expires_at.month,
+    )
+
+    ptask = PeriodicTask.objects.create(
+        name=f'broadcast_cleanup {bid}',
+        task='apps.notification.tasks.broadcast_cleanup_task',
+        one_off=True,
+        crontab=schedule,
+        args=json.dumps([bid])
+    )
+    ptask.save()
+
