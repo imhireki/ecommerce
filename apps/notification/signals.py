@@ -38,3 +38,8 @@ def post_save_broadcast(instance, **kwargs):
             instance.id, instance.expires_at
         )
 
+@receiver(pre_delete, sender='notification.Broadcast')
+def pre_delete_broadcast(instance, **kwargs):
+    """Manual cleanup when deleting a Broadcast"""
+    tasks.broadcast_cleanup_task.delay(instance.id)
+
