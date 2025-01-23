@@ -64,3 +64,16 @@ def test_post_save_broadcast_notification_cleanup(enable_post_save_broadcast,
     else:
         assert schedule_cleanup.call_args.args == (b.id, b.expires_at)
 
+def test_pre_delete_broadcast_notification(enable_pre_delete_broadcast,
+                                           mocker):
+    cleanup = mocker.patch(
+        'apps.notification.tasks.broadcast_cleanup_task.delay'
+    )
+
+    b = baker.make('notification.Broadcast')
+
+    pre_delete.send(Broadcast, instance=b)
+
+    assert cleanup.called
+    assert cleanup.call_args.args == (b.id,)
+
