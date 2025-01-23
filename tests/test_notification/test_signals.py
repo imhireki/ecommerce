@@ -39,3 +39,28 @@ def test_post_save_broadcast_notification(enable_post_save_broadcast,
         assert (schedule_broadcast.call_args.args
                 == (b.id, b.message, b.scheduled_to, b.expires_at))
 
+@pytest.mark.parametrize('time, b', [
+    ('past', baker.prepare(BM, expires_at=now()-timedelta(minutes=1))),
+    ('present', baker.prepare(BM, expires_at=now())),
+    ('future', baker.prepare(BM, expires_at=now()+timedelta(minutes=3)))
+])
+def test_post_save_broadcast_notification_cleanup(enable_post_save_broadcast,
+                                                  mocker, time, b):
+    cleanup_task = mocker.patch(
+        'apps.notification.tasks.broadcast_cleanup_task.delay'
+    )
+    schedule_cleanup = mocker.patch(
+        'apps.notification.utils.schedule_broadcast_cleanup'
+    )
+
+    # Broadcasting will be called but not tested
+    mocker.patch('apps.notification.tasks.broadcast_task.delay')
+    mocker.patch('apps.notification.utils.schedule_broadcast')
+
+    post_save.send(Broadcast, instance=b)
+
+    if time in ['past', 'present']:
+        assert cleanup_task.call_args.args == (b.id,)
+    else:
+        assert schedule_cleanup.call_args.args == (b.id, b.expires_at)
+
