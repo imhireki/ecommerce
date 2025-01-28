@@ -9,7 +9,7 @@ pytestmark = [pytest.mark.unit, pytest.mark.django_db]
 
 class TestProductListSerializer:
     def test_serialize(self, patch_image, get_product_list_data):
-        product = baker.make('product.Product')
+        product = baker.make("product.Product")
         serializer = serializers.ProductListSerializer(product)
 
         assert serializer.data == get_product_list_data(product)
@@ -17,7 +17,7 @@ class TestProductListSerializer:
 
 class TestProductImageSerializer:
     def test_serialize(self, mocker, patch_image, get_product_image_data):
-        image = baker.make('product.ProductImage')
+        image = baker.make("product.ProductImage")
         serializer = serializers.ProductImageSerializer(image)
 
         assert serializer.data == get_product_image_data(image)
@@ -25,7 +25,7 @@ class TestProductImageSerializer:
 
 class TestProductVariationSerializer:
     def test_serialize(self, patch_image, get_product_variation_data):
-        variation = baker.make('product.ProductVariation')
+        variation = baker.make("product.ProductVariation")
         serializer = serializers.ProductVariationSerializer(variation)
 
         assert serializer.data == get_product_variation_data(variation)
@@ -33,12 +33,10 @@ class TestProductVariationSerializer:
 
 class TestProductDetailSerializer:
     def test_serialize(self, patch_image, get_product_detail_data):
-        product = baker.make('product.Product')
-        variation = baker.make('product.ProductVariation', 2, product=product)
-        image = baker.make('product.ProductImage', 3, product=product)
+        product = baker.make("product.Product")
+        variation = baker.make("product.ProductVariation", 2, product=product)
+        image = baker.make("product.ProductImage", 3, product=product)
 
         serializer = serializers.ProductDetailSerializer(product)
 
-        assert serializer.data == get_product_detail_data(
-            product, image, variation)
-
+        assert serializer.data == get_product_detail_data(product, image, variation)
