@@ -10,18 +10,20 @@ class OrderCheckoutView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        order_items = request.data.get('order_items')
+        order_items = request.data.get("order_items")
 
-        request.data.update({
-            "user": request.user.id,
-            "order_items": order_items,
-            "paid_amount": sum([
-                product_variation['price']
-                for product_variation in order_items 
-            ])
-        })
-        
+        request.data.update(
+            {
+                "user": request.user.id,
+                "order_items": order_items,
+                "paid_amount": sum(
+                    [product_variation["price"] for product_variation in order_items]
+                ),
+            }
+        )
+
         return super().create(request, *args, **kwargs)
+
 
 class OrderListView(generics.ListAPIView):
     serializer_class = serializers.OrderListSerializer
@@ -29,4 +31,3 @@ class OrderListView(generics.ListAPIView):
 
     def get_queryset(self):
         return models.Order.objects.filter(user=self.request.user)
-
