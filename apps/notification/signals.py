@@ -7,9 +7,9 @@ from . import tasks
 from . import utils
 
 
-@receiver(post_save, sender='notification.Broadcast')
+@receiver(post_save, sender="notification.Broadcast")
 def post_save_broadcast(instance, **kwargs):
-    """Schedule the broadcasting and cleanup of the schedled tasks"""
+    """Schedule tasks/execute broadcasting and cleanup"""
     current_time = timezone.now()
     margin_of_error = timedelta(minutes=1)
 
@@ -17,29 +17,22 @@ def post_save_broadcast(instance, **kwargs):
     if instance.scheduled_to <= current_time + margin_of_error:
         # Execute in the present
         tasks.broadcast_task.delay(
-            instance.id,
-            instance.message,
-            instance.expires_at.isoformat()
+            instance.id, instance.message, instance.expires_at.isoformat()
         )
     else:
         # Schedule for the future
         utils.schedule_broadcast(
-            instance.id,
-            instance.message,
-            instance.scheduled_to,
-            instance.expires_at
+            instance.id, instance.message, instance.scheduled_to, instance.expires_at
         )
 
     # There's not enough time to schedule the cleanup
     if instance.expires_at <= current_time + margin_of_error:
         tasks.broadcast_cleanup_task.delay(instance.id)
     else:
-        utils.schedule_broadcast_cleanup(
-            instance.id, instance.expires_at
-        )
+        utils.schedule_broadcast_cleanup(instance.id, instance.expires_at)
 
-@receiver(pre_delete, sender='notification.Broadcast')
+
+@receiver(pre_delete, sender="notification.Broadcast")
 def pre_delete_broadcast(instance, **kwargs):
     """Manual cleanup when deleting a Broadcast"""
     tasks.broadcast_cleanup_task.delay(instance.id)
-

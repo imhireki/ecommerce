@@ -4,6 +4,9 @@ from apps.notification import views
 
 
 urlpatterns = [
-    path('broadcasted/', views.BroadcastListView.as_view(),
-         name='broadcast-notification-list'),
+    path(
+        "broadcasted/",
+        views.BroadcastListView.as_view(),
+        name="broadcast-notification-list",
+    ),
 ]

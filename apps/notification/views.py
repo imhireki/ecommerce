@@ -7,10 +7,7 @@ from . import models
 
 class BroadcastListView(generics.ListAPIView):
     serializer_class = serializers.BroadcastSerializer
-    
+
     def get_queryset(self):
         # Exclude broadcasts after current date
-        return models.Broadcast.objects.filter(
-            scheduled_to__lt=timezone.now()
-        )
-
+        return models.Broadcast.objects.filter(scheduled_to__lt=timezone.now())

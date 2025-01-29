@@ -6,5 +6,4 @@ from .models import Broadcast
 class BroadcastSerializer(serializers.ModelSerializer):
     class Meta:
         model = Broadcast
-        exclude = ['scheduled_to']
-
+        exclude = ["scheduled_to"]
