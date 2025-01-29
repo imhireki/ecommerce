@@ -13,8 +13,8 @@ class ProductListView(generics.ListAPIView):
 class ProductDetailView(generics.RetrieveAPIView):
     queryset = models.Product.objects.all()
     serializer_class = serializers.ProductDetailSerializer
-    lookup_field = 'slug'
-    lookup_url_kwarg = 'slug'
+    lookup_field = "slug"
+    lookup_url_kwarg = "slug"
 
 
 class ProductSearchView(generics.GenericAPIView, mixins.ListModelMixin):
@@ -22,8 +22,8 @@ class ProductSearchView(generics.GenericAPIView, mixins.ListModelMixin):
 
     def get_queryset(self):
         return models.Product.objects.filter(
-            name__icontains=self.request.data.get('query'))
+            name__icontains=self.request.data.get("query")
+        )
 
     def post(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
-
