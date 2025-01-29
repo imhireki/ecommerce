@@ -6,9 +6,10 @@ class Broadcast(models.Model):
     scheduled_to = models.DateTimeField()
     expires_at = models.DateTimeField()
 
+    objects = models.Manager()
+
     class Meta:
-        ordering = ['-scheduled_to']
+        ordering = ["-scheduled_to"]
 
     def __str__(self) -> str:
         return str(self.message)
-
