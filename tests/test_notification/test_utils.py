@@ -38,7 +38,7 @@ def test_delete_broadcast_object(broadcast):
     "ptask, same_sched_ptask",
     [(True, True), (True, False), (False, True), (False, False)],
 )
-def test_remove_broadcast_periodic_task(mocker, ptask, same_sched_ptask):
+def test_remove_broadcast_periodic_task(ptask, same_sched_ptask):
     schedule = None
 
     if ptask or same_sched_ptask:
@@ -59,7 +59,7 @@ def test_remove_broadcast_periodic_task(mocker, ptask, same_sched_ptask):
     assert not PeriodicTask.objects.filter(name="b 5").exists()
 
 
-def test_schedule_broadcast(mocker):
+def test_schedule_broadcast():
     b = baker.make("notification.Broadcast")
 
     utils.schedule_broadcast(b.id, b.message, b.scheduled_to, b.expires_at)
@@ -76,7 +76,7 @@ def test_schedule_broadcast(mocker):
     assert ptask
 
 
-def test_schedule_broadcast_cleanup(mocker):
+def test_schedule_broadcast_cleanup():
     b = baker.make("notification.Broadcast")
 
     utils.schedule_broadcast_cleanup(b.id, b.expires_at)

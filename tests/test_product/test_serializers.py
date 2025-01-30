@@ -16,7 +16,7 @@ class TestProductListSerializer:
 
 
 class TestProductImageSerializer:
-    def test_serialize(self, mocker, patch_image, get_product_image_data):
+    def test_serialize(self, patch_image, get_product_image_data):
         image = baker.make("product.ProductImage")
         serializer = serializers.ProductImageSerializer(image)
 

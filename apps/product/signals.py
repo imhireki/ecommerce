@@ -9,7 +9,7 @@ PRODUCT_THUMBNAIL_SIZE = (640, 360)
 
 
 @receiver(pre_save, sender="product.Product")
-def pre_save_product(sender, instance, *args, **kwargs):
+def pre_save_product(instance, **kwargs):
     if not instance.slug:
         instance.slug = slugify(instance.name)
 
