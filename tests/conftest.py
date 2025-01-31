@@ -10,7 +10,7 @@ def api_client():
 
 @pytest.fixture
 def patch_image(mocker):
-    mocker.patch("apps.product.utils.resize_image", lambda image, size: image)
+    mocker.patch("apps.product.utils.make_thumbnail", lambda image, size: image)
     mocker.patch(
         "apps.product.models.Product.get_thumbnail_absolute_url",
         settings.ABSOLUTE_URL + "/media/thumbnail",

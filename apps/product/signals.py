@@ -16,5 +16,8 @@ def pre_save_product(instance, **kwargs):
     # Updating my product without updating my thumbnail
     if instance.thumbnail._committed:
         return
+
     # Adding/Updating thumbnail
-    instance.thumbnail = utils.resize_image(instance.thumbnail, PRODUCT_THUMBNAIL_SIZE)
+    instance.thumbnail = utils.make_thumbnail(
+        instance.thumbnail, PRODUCT_THUMBNAIL_SIZE
+    )

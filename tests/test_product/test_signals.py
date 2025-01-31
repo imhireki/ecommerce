@@ -26,7 +26,7 @@ def test_slug_pre_save_product(mocker, slug):
 def test_thumbnail_pre_save_product(mocker, saved_thumbnail):
     mocker.patch("apps.product.signals.slugify")
 
-    resize = mocker.patch("apps.product.utils.resize_image")
+    make_thumbnail = mocker.patch("apps.product.utils.make_thumbnail")
 
     original_image = mocker.Mock()
     original_image._committed = saved_thumbnail
@@ -34,13 +34,13 @@ def test_thumbnail_pre_save_product(mocker, saved_thumbnail):
     p = baker.prepare("product.Product", thumbnail=original_image)
 
     if saved_thumbnail:
-        resize.assert_not_called()
+        make_thumbnail.assert_not_called()
     else:
         # Creating
         pre_save.send(Product, instance=p, created=True)
-        resize.assert_called_with(original_image, PRODUCT_THUMBNAIL_SIZE)
+        make_thumbnail.assert_called_with(original_image, PRODUCT_THUMBNAIL_SIZE)
 
         # Updating (wo updating thumbnail)
         # Last call should be when creating
         pre_save.send(Product, instance=p, created=False)
-        resize.assert_called_with(original_image, PRODUCT_THUMBNAIL_SIZE)
+        make_thumbnail.assert_called_with(original_image, PRODUCT_THUMBNAIL_SIZE)
