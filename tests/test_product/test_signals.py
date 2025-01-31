@@ -2,17 +2,45 @@ from django.db.models.signals import pre_save
 from model_bakery import baker
 import pytest
 
+from apps.product.signals import PRODUCT_THUMBNAIL_SIZE
 from apps.product.models import Product
 
 
-@pytest.mark.django_db
-@pytest.mark.unit
-def test_pre_save_product(mocker):
-    resize_image = mocker.patch("apps.product.utils.resize_image")
+pytestmark = [pytest.mark.django_db, pytest.mark.unit]
+
+
+@pytest.mark.parametrize("slug", ["my-slug", ""])
+def test_slug_pre_save_product(mocker, slug):
     slugify = mocker.patch("apps.product.signals.slugify")
-    product = baker.prepare("product.Product")
 
-    pre_save.send(Product, instance=product, created=True)
+    p = baker.prepare("product.Product", slug=slug)
+    pre_save.send(Product, instance=p, created=True)
 
-    resize_image.assert_called()
-    slugify.assert_called()
+    if slug:
+        slugify.assert_not_called()
+    else:
+        slugify.assert_called_with(p.name)
+
+
+@pytest.mark.parametrize("saved_thumbnail", [True, False])
+def test_thumbnail_pre_save_product(mocker, saved_thumbnail):
+    mocker.patch("apps.product.signals.slugify")
+
+    resize = mocker.patch("apps.product.utils.resize_image")
+
+    original_image = mocker.Mock()
+    original_image._committed = saved_thumbnail
+
+    p = baker.prepare("product.Product", thumbnail=original_image)
+
+    if saved_thumbnail:
+        resize.assert_not_called()
+    else:
+        # Creating
+        pre_save.send(Product, instance=p, created=True)
+        resize.assert_called_with(original_image, PRODUCT_THUMBNAIL_SIZE)
+
+        # Updating (wo updating thumbnail)
+        # Last call should be when creating
+        pre_save.send(Product, instance=p, created=False)
+        resize.assert_called_with(original_image, PRODUCT_THUMBNAIL_SIZE)
