@@ -10,7 +10,7 @@ class Product(models.Model):
     description = models.TextField(blank=True)
 
     slug = models.SlugField(max_length=255, unique=True, blank=True)
-    thumbnail = models.ImageField(upload_to="product/thumbnails/%Y/%m/", blank=True)
+    thumbnail = models.ImageField(upload_to="product/thumbnails/%Y/%m/")
 
     marketing_price = models.DecimalField(**PRICE_OPTIONS)
     promotional_marketing_price = models.DecimalField(**PRICE_OPTIONS)

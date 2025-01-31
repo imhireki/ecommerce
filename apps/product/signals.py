@@ -13,7 +13,8 @@ def pre_save_product(instance, **kwargs):
     if not instance.slug:
         instance.slug = slugify(instance.name)
 
-    if not instance.thumbnail:
-        instance.thumbnail = utils.resize_image(
-            instance.thumbnail, PRODUCT_THUMBNAIL_SIZE
-        )
+    # Updating my product without updating my thumbnail
+    if instance.thumbnail._committed:
+        return
+    # Adding/Updating thumbnail
+    instance.thumbnail = utils.resize_image(instance.thumbnail, PRODUCT_THUMBNAIL_SIZE)
