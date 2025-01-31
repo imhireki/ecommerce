@@ -1,16 +1,16 @@
 from io import BytesIO
 
-from django.core.files import File
+from django.db.models.fields.files import ImageFieldFile
+from django.core.files.base import ContentFile
 import PIL.Image
 
 
-def resize_image(image: File, size: tuple[int, int]) -> File:
-    new_image = BytesIO()
 
-    with PIL.Image.open(image) as pillow_image:
-        resized_image = pillow_image.resize(size, resample=1, reducing_gap=2)
-        resized_image.save(
-            new_image, format=pillow_image.format, optimize=True, quality=70
-        )
+def make_thumbnail(image: ImageFieldFile, size: tuple[int, int]) -> ContentFile:
+    thumbnail_io = BytesIO()
 
-    return File(new_image, name=image.name)
+    with PIL.Image.open(image) as pil_img:  # type: ignore
+        resized_img = pil_img.resize(size, PIL.Image.Resampling.LANCZOS, reducing_gap=2)
+        resized_img.save(thumbnail_io, pil_img.format, optimize=True, quality=85)
+
+    return ContentFile(thumbnail_io.getvalue(), name=image.name)
