@@ -8,6 +8,7 @@ celery==5.4.0
 certifi==2024.12.14
 cffi==1.17.1
 channels==4.2.0
+channels_redis==4.2.1
 charset-normalizer==3.4.1
 click==8.1.8
 click-didyoumean==0.3.1
@@ -30,11 +31,13 @@ incremental==24.7.2
 iniconfig==2.0.0
 kombu==5.4.2
 model-bakery==1.20.1
+msgpack==1.1.0
 packaging==24.2
 pillow==11.1.0
 pluggy==1.5.0
 prompt_toolkit==3.0.48
 psutil==6.1.1
+psycopg2-binary==2.9.10
 pyasn1==0.6.1
 pyasn1_modules==0.4.1
 pycparser==2.22
