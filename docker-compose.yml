@@ -1,0 +1,51 @@
+name: ecommerce
+
+services:
+
+  backend:
+    build: .
+    container_name: ecommerce_django
+    command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+      - celery_worker
+      - celery_beat
+
+  celery_worker:
+    build: .
+    container_name: ecommerce_celery_worker
+    command: celery -A core worker -l INFO
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+
+  celery_beat:
+    build: .
+    container_name: ecommerce_celery_beat
+    command: celery -A core beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - redis
+      - celery_worker
+
+  redis:
+    image: redis
+    container_name: ecommerce_redis
+
+  db:
+    image: postgres:13
+    container_name: ecommerce_postgres_db
+    environment:  # .env is automatically read by docker-compose
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
