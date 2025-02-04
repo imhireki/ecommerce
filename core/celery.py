@@ -12,7 +12,7 @@ app = Celery("ecommerce")
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
 # Modules to search for tasks.py
-app.autodiscover_tasks(["apps.order", "apps.product"])
+app.autodiscover_tasks(["apps.order", "apps.product", "apps.notification"])
 
 
 @app.task(bind=True, ignore_results=True)
